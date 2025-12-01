@@ -1,0 +1,39 @@
+package tests;
+
+import java.util.List;
+
+import org.jgrapht.Graph;
+import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
+
+import ejercicio4.Calle;
+import ejercicio4.Interseccion;
+import us.lsi.graphs.Graphs2;
+import us.lsi.graphs.GraphsReader;
+
+public class TestEjercicio4 {
+
+	public static void main(String[] args) {
+		Graph<Interseccion, Calle> g = GraphsReader.newGraph(
+		"ficheros/PI2E4_DatosEntrada.txt", Interseccion::ofFormat, Calle::ofFormat, Graphs2::simpleWeightedGraph, Calle::getDuracion);
+	
+		
+		List<Interseccion> ls = List.copyOf(g.vertexSet());
+		Interseccion a = ls.get(0), b = ls.get(1);
+		
+		var alg = new DijkstraShortestPath<>(g);
+		var msg = "Camino mas corto de " + a + " a " + b + " tiene peso " + alg.getPathWeight(a, b);
+		System.out.println(msg);
+		
+		for (var e: g.edgeSet()) {
+			g.setEdgeWeight(e, e.getEsfuerzo());
+		}
+		
+		msg = "Camino mas corto de " + a + " a " + b + " tiene peso " + alg.getPathWeight(a, b);
+		
+		System.out.println(msg);
+
+	}
+	
+
+	
+}
