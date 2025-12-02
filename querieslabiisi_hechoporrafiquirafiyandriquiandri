@@ -1,0 +1,39 @@
+	-- Nombre de los ganadores
+SELECT p.name
+FROM people p, matches m
+WHERE p.person_id= m.winner_id;
+
+-- Nombre de los árbitros
+
+SELECT p.name
+FROM people p, referees r
+WHERE p.person_id= r.referee_id;
+
+-- Nombre de todos los jugadores y el partido ganado (por cada partido ganado). Los ganadores que no hayan ganado ningún partido también deben aparecer una vez con el partido a null
+SELECT p.name, m.match_id
+FROM people p
+	LEFT JOIN matches m
+	ON p.person_id = m.winner_id
+UNION
+SELECT p.name, m.match_id
+FROM people p
+	RIGHT JOIN matches m
+	ON p.person_id= m.winner_id;
+	
+-- Función que dado un árbitro cuente los partidos que ha arbitrado
+DELIMITER //
+CREATE OR REPLACE FUNCTION
+fPartidosAribitros(par INT) RETURNS INT
+BEGIN
+RETURN (
+SELECT COUNT(*)
+FROM referees E JOIN matches D
+ON (E.referee_id = D.referee_id)
+WHERE D.referee_id = par
+);
+END//
+DELIMITER ;
+
+SELECT referee_id, fPartidosAribitros(referee_id)
+FROM matches
+GROUP BY referee_id;
